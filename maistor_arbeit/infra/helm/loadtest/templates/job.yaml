@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.locust.scriptConfigMap }}
+data:
+  locustfile.py: |
+{{ .Files.Get "tests/load/locustfile.py" | indent 4 }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "loadtest.fullname" . | default (printf "%s-load" .Release.Name) }}
+spec:
+  template:
+    spec:
+      containers:
+        - name: locust
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["locust"]
+          args:
+            - "-f"
+            - "/scenarios/locustfile.py"
+            - "--headless"
+            - "-u"
+            - "{{ .Values.locust.users }}"
+            - "-r"
+            - "{{ .Values.locust.spawnRate }}"
+            - "-t"
+            - "{{ .Values.locust.runTime }}"
+            - "-H"
+            - "{{ .Values.locust.host }}"
+          volumeMounts:
+            - name: scripts
+              mountPath: /scenarios
+      restartPolicy: Never
+      volumes:
+        - name: scripts
+          configMap:
+            name: {{ .Values.locust.scriptConfigMap }}
+  backoffLimit: 0

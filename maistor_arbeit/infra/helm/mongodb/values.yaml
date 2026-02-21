@@ -1,0 +1,21 @@
+replicaCount: 3
+storage:
+  size: 10Gi
+  className: standard
+resources:
+  requests:
+    cpu: 200m
+    memory: 512Mi
+  limits:
+    cpu: 500m
+    memory: 1Gi
+
+service:
+  port: 27017
+
+persistence:
+  accessModes:
+    - ReadWriteOnce
+
+init:
+  keyFileSecret: mongodb-keyfile

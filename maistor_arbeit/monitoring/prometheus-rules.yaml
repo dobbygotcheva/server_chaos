@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: cloud-native-alerts
+spec:
+  groups:
+    - name: api-latency
+      rules:
+        - alert: HighErrorRate
+          expr: sum(rate(flask_http_request_total{status!~"2.."}[5m])) / sum(rate(flask_http_request_total[5m])) > 0.05
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High API error rate"
+            description: "More than 5% of API requests are failing."
+        - alert: HighLatency
+          expr: histogram_quantile(0.95, sum(rate(flask_http_request_duration_seconds_bucket[5m])) by (le)) > 0.5
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "API latency above 500ms"

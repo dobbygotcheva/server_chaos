@@ -1,0 +1,5 @@
+apiVersion: v2
+name: monitoring-stack
+version: 0.1.0
+appVersion: "0.68"
+description: Prometheus and Grafana monitoring stack

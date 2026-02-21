@@ -1,0 +1,10 @@
+flask==3.0.3
+flask-cors==4.0.0
+pymongo[srv]==4.10.1
+gunicorn==21.2.0
+prometheus-flask-exporter==0.23.3
+python-dotenv==1.0.1
+locust==2.29.1
+kubernetes==29.0.0
+yamlpath==3.9.1
+pytest==8.3.2

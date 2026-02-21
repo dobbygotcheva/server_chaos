@@ -1,0 +1,5 @@
+apiVersion: v2
+name: cloud-native-api
+version: 0.1.0
+appVersion: "0.1.0"
+description: Helm chart for the cloud-native Flask API service

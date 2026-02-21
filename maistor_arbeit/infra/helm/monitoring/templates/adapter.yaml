@@ -1,0 +1,39 @@
+{{- if .Values.prometheusAdapter.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "monitoring.fullname" . }}-adapter-rules
+data:
+  rules.yaml: |
+    {{ toYaml .Values.prometheusAdapter.rules | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "monitoring.fullname" . }}-adapter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-adapter
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: prometheus-adapter
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: adapter
+          image: k8s.gcr.io/prometheus-adapter/prometheus-adapter:v0.10.0
+          args:
+            - "--config-file=/etc/adapter/rules.yaml"
+            - "--log-level=info"
+          volumeMounts:
+            - name: config
+              mountPath: /etc/adapter
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "monitoring.fullname" . }}-adapter-rules
+{{- end -}}

@@ -1,0 +1,25 @@
+prometheus:
+  replicas: 1
+  scrapeInterval: 15s
+  retention: 12h
+
+alertmanager:
+  enabled: true
+  slackWebhook: ""
+
+grafana:
+  adminUser: admin
+  adminPassword: admin
+  dashboardsConfigMap: grafana-dashboards
+
+prometheusAdapter:
+  enabled: true
+  rules:
+    custom:
+      - seriesQuery: 'flask_http_request_total{job="api"}'
+        resources:
+          template: "<<.Resource>>"
+        name:
+          matches: "^flask_http_request_total"
+          as: "requests_per_second"
+        metricsQuery: sum(rate(flask_http_request_total{job="api"}[2m]))

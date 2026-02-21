@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cloud Native Dashboard</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 2rem; background: #f5f7fa; }
+      h1 { color: #0b7285; }
+      #messages { margin-top: 1rem; }
+      .card { background: #fff; padding: 1rem; margin-bottom: 0.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
+      form { display: flex; gap: 0.5rem; margin-top: 1rem; }
+      input, button { padding: 0.5rem; }
+    </style>
+  </head>
+  <body>
+    <h1>Cloud Native System Dashboard</h1>
+    <p>Send a message to the distributed backend and see replica health.</p>
+
+    <form id="message-form">
+      <input type="text" id="author" placeholder="Author" />
+      <input type="text" id="message" placeholder="Message" required />
+      <button type="submit">Send</button>
+    </form>
+
+    <section id="messages"></section>
+
+    <script>
+      const API = window.API_BASE || 'http://localhost:8080';
+
+      async function fetchMessages() {
+        const res = await fetch(`${API}/api/v1/messages?limit=10`);
+        const data = await res.json();
+        const list = document.getElementById('messages');
+        list.innerHTML = data.data.map(item => `
+          <div class="card">
+            <strong>${item.author}</strong>
+            <p>${item.message}</p>
+            <small>${new Date(item.created_at).toLocaleString()}</small>
+          </div>
+        `).join('');
+      }
+
+      document.getElementById('message-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await fetch(`${API}/api/v1/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            author: document.getElementById('author').value || 'web',
+            message: document.getElementById('message').value,
+            metadata: { source: 'frontend' }
+          })
+        });
+        fetchMessages();
+      });
+
+      fetchMessages();
+      setInterval(fetchMessages, 5000);
+    </script>
+  </body>
+</html>

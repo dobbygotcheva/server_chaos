@@ -1,0 +1,5 @@
+apiVersion: v2
+name: loadtest
+version: 0.1.0
+appVersion: "2.0"
+description: Helm chart for Locust-based load testing jobs

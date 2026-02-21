@@ -1,0 +1,15 @@
+image:
+  repository: locustio/locust
+  tag: 2.29.1
+  pullPolicy: IfNotPresent
+
+locust:
+  scriptConfigMap: locust-scenarios
+  users: 1000
+  spawnRate: 100
+  host: http://cloud-native-api
+  runTime: 10m
+
+schedule:
+  enabled: false
+  cron: "0 * * * *"
