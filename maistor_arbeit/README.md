@@ -46,4 +46,4 @@ This project demonstrates a cloud-native web application featuring a Python Flas
    locust -f tests/load/locustfile.py --headless -u 500 -r 50 -H http://localhost:8080
    ```
 
-Detailed experiment instructions live in `docs/EXPERIMENTS.md`.
+
