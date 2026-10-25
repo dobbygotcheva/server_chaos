@@ -1,4 +1,4 @@
-# System Architecture
+# System Architecture specifics
 
 ## Components
 - **Frontend**: static dashboard polling API, hosted via CDN or Kubernetes ingress.
